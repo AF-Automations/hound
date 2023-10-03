@@ -18,6 +18,8 @@ const (
 	defaultAnchor                = "#L{line}"
 	defaultHealthCheckURI        = "/healthz"
 	defaultResultLimit           = 5000
+	defaultBaseURLAzureDevops    = "{url}/?path=%2F{path}&version=GBmaster&line={anchor}"
+	defaultAnchorAzureDevops     = "&line={line}"
 )
 
 type UrlPattern struct {
@@ -106,9 +108,16 @@ func initRepo(r *Repo) {
 	}
 
 	if r.UrlPattern == nil {
-		r.UrlPattern = &UrlPattern{
-			BaseUrl: defaultBaseUrl,
-			Anchor:  defaultAnchor,
+		if strings.Contains(r.URL, "visualstudio.com") {
+			r.URLPattern = &URLPattern{
+				BaseURL: defaultBaseURLAzureDevops,
+				Anchor:  defaultAnchorAzureDevops,
+			}
+		} else {
+			r.URLPattern = &URLPattern{
+				BaseURL: defaultBaseURL,
+				Anchor:  defaultAnchor,
+			}
 		}
 	} else {
 		if r.UrlPattern.BaseUrl == "" {
