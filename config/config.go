@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const (
@@ -18,7 +19,7 @@ const (
 	defaultAnchor                = "#L{line}"
 	defaultHealthCheckURI        = "/healthz"
 	defaultResultLimit           = 5000
-	defaultBaseURLAzureDevops    = "{url}/?path=%2F{path}&version=GBmaster&line={anchor}"
+	defaultBaseUrlAzureDevops    = "{url}/?path=%2F{path}&version=GBmaster&line={anchor}"
 	defaultAnchorAzureDevops     = "&line={line}"
 )
 
@@ -99,35 +100,43 @@ func (r *Repo) VcsConfig() []byte {
 
 // Populate missing config values with default values.
 func initRepo(r *Repo) {
-	if r.MsBetweenPolls == 0 {
-		r.MsBetweenPolls = defaultMsBetweenPoll
-	}
+    if r.MsBetweenPolls == 0 {
+        r.MsBetweenPolls = defaultMsBetweenPoll
+    }
 
-	if r.Vcs == "" {
-		r.Vcs = defaultVcs
-	}
+    if r.Vcs == "" {
+        r.Vcs = defaultVcs
+    }
 
-	if r.UrlPattern == nil {
-		if strings.Contains(r.URL, "visualstudio.com") {
-			r.URLPattern = &URLPattern{
-				BaseURL: defaultBaseURLAzureDevops,
-				Anchor:  defaultAnchorAzureDevops,
-			}
-		} else {
-			r.URLPattern = &URLPattern{
-				BaseURL: defaultBaseURL,
-				Anchor:  defaultAnchor,
-			}
-		}
-	} else {
-		if r.UrlPattern.BaseUrl == "" {
-			r.UrlPattern.BaseUrl = defaultBaseUrl
-		}
+    if r.UrlPattern == nil {
+        r.UrlPattern = &UrlPattern{
+            BaseUrl: defaultBaseUrl,
+            Anchor:  defaultAnchor,
+        }
+    } else {
+        if r.UrlPattern.BaseUrl == "" {
+            r.UrlPattern.BaseUrl = defaultBaseUrl
+        }
 
-		if r.UrlPattern.Anchor == "" {
-			r.UrlPattern.Anchor = defaultAnchor
-		}
-	}
+        if r.UrlPattern.Anchor == "" {
+            r.UrlPattern.Anchor = defaultAnchor
+        }
+    }
+
+    // Check if the r.URL field contains the string "visualstudio.com".
+	if strings.Contains(r.Url, "visualstudio.com") {
+        // Set the r.URLPattern field to the default values for Azure DevOps.
+        r.UrlPattern = &UrlPattern{
+            BaseUrl: defaultBaseUrlAzureDevops,
+            Anchor:  defaultAnchorAzureDevops,
+        }
+    } else {
+        // Set the r.URLPattern field to the default values.
+        r.UrlPattern = &UrlPattern{
+            BaseUrl: defaultBaseUrl,
+            Anchor:  defaultAnchor,
+        }
+    }
 }
 
 // Populate missing config values with default values and
