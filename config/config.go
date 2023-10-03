@@ -108,15 +108,22 @@ func initRepo(r *Repo) {
         r.Vcs = defaultVcs
     }
 
-    if r.UrlPattern == nil {
-        r.UrlPattern = &UrlPattern{
-            BaseUrl: defaultBaseUrl,
-            Anchor:  defaultAnchor,
-        }
-    } else {
-        if r.UrlPattern.BaseUrl == "" {
-            r.UrlPattern.BaseUrl = defaultBaseUrl
-        }
+	if r.UrlPattern == nil {
+		if strings.Contains(r.Url, "visualstudio.com") {
+			r.UrlPattern = &UrlPattern{
+				BaseURL: defaultBaseUrlAzureDevops,
+				Anchor:  defaultAnchorAzureDevops,
+			}
+		} else {
+			r.UrlPattern = &UrlPattern{
+				BaseURL: defaultBaseUrl,
+				Anchor:  defaultAnchor,
+			}
+		}
+	} else {
+		if r.UrlPattern.BaseUrl == "" {
+			r.UrlPattern.BaseUrl = defaultBaseUrl
+		}
 
         if r.UrlPattern.Anchor == "" {
             r.UrlPattern.Anchor = defaultAnchor
