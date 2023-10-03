@@ -111,12 +111,12 @@ func initRepo(r *Repo) {
 	if r.UrlPattern == nil {
 		if strings.Contains(r.Url, "visualstudio.com") {
 			r.UrlPattern = &UrlPattern{
-				BaseURL: defaultBaseUrlAzureDevops,
+				BaseUrl: defaultBaseUrlAzureDevops,
 				Anchor:  defaultAnchorAzureDevops,
 			}
 		} else {
 			r.UrlPattern = &UrlPattern{
-				BaseURL: defaultBaseUrl,
+				BaseUrl: defaultBaseUrl,
 				Anchor:  defaultAnchor,
 			}
 		}
